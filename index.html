@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrivatePilot — Local-First Personal Agent</title>
+  <meta name="description" content="A privacy-first, on-device personal agent that handles email, calendar, notes, and files locally with safe tool-use confirmations.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">PrivatePilot</span>
+            <span class="brand-subtitle">Local-First Agent</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="dashboard" id="nav-dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="7" height="9" x="3" y="3" rx="1"/>
+            <rect width="7" height="5" x="14" y="3" rx="1"/>
+            <rect width="7" height="9" x="14" y="12" rx="1"/>
+            <rect width="7" height="5" x="3" y="16" rx="1"/>
+          </svg>
+          <span>Dashboard</span>
+        </button>
+
+        <button class="nav-item" data-tab="email" id="nav-email">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="16" x="2" y="4" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+          <span>Email</span>
+          <span class="nav-badge" id="sidebar-email-badge">3</span>
+        </button>
+
+        <button class="nav-item" data-tab="calendar" id="nav-calendar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="4" rx="2"/>
+            <line x1="16" x2="16" y1="2" y2="6"/>
+            <line x1="8" x2="8" y1="2" y2="6"/>
+            <line x1="3" x2="21" y1="10" y2="10"/>
+          </svg>
+          <span>Calendar</span>
+          <span class="nav-badge" id="sidebar-cal-badge">3</span>
+        </button>
+
+        <button class="nav-item" data-tab="notes" id="nav-notes">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/>
+            <path d="M15 3v5h5"/>
+            <line x1="9" x2="15" y1="13" y2="13"/>
+            <line x1="9" x2="13" y1="17" y2="17"/>
+          </svg>
+          <span>Notes</span>
+          <span class="nav-badge" id="sidebar-notes-badge">4</span>
+        </button>
+
+        <button class="nav-item" data-tab="files" id="nav-files">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 20a2 2 0 0 0 2-2V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2Z"/>
+            <path d="M14 2v6h6"/>
+            <path d="M8 18h8"/>
+          </svg>
+          <span>Files</span>
+          <span class="nav-badge" id="sidebar-files-badge">5</span>
+        </button>
+
+        <button class="nav-item" data-tab="privacy" id="nav-privacy">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span>Privacy & Audit</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="vault-safety-card">
+          <div class="safety-icon-row">
+            <span class="safe-pulse"></span>
+            <span class="vault-label">Local Vault Sandbox</span>
+          </div>
+          <p class="vault-desc">No data leaves this device. All tool executions require local sandbox compliance.</p>
+          <button class="btn btn-outline-xs" id="btn-reset-vault" title="Restore default demo data">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Reset Demo Vault
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Application Area -->
+    <div class="main-wrapper">
+      <!-- Global Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="btn-icon mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg>
+          </button>
+          <div class="page-title-group">
+            <h1 class="page-title" id="page-title">Personal Agent Hub</h1>
+            <span class="page-tagline" id="page-tagline">On-Device Privacy Engine</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Mandatory Badges -->
+          <div class="badge badge-local" id="badge-local-only" title="Zero outbound network requests enabled">
+            <span class="badge-dot pulse-green"></span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>LOCAL ONLY</span>
+          </div>
+
+          <div class="badge badge-model" id="badge-model" title="Quantized small open-weight LLM running on-device">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Model: Phi-3 Mini (local)</span>
+          </div>
+
+          <div class="network-status" title="Network requests blocked">
+            <span class="net-tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="1" x2="23" y1="1" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" x2="12.01" y1="20" y2="20"/></svg> 0 B Exfiltrated</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Container with Tabs -->
+      <main class="content-container">
+
+        <!-- Graceful Backend Offline Banner -->
+        <div class="vault-backend-offline-banner" id="backend-offline-banner" style="display: none;">
+          <div class="disclaimer-icon" style="color: #f87171;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div style="flex: 1;">
+            <strong>Backend Unavailable:</strong> Local-first backend server is not reachable at <span class="code-pill">http://127.0.0.1:3000</span>. Please run <code class="code-pill" style="color: #fca5a5;">node server.js</code> in your terminal to enable persistent vault storage.
+          </div>
+          <button class="btn btn-outline-xs" id="btn-retry-backend" style="border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; cursor: pointer;">
+            Retry Connection
+          </button>
+        </div>
+
+        <!-- 1. DASHBOARD TAB -->
+        <section class="tab-pane active" id="tab-dashboard">
+          <!-- Disclaimer Banner -->
+          <div class="vault-disclaimer-banner">
+            <div class="disclaimer-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+            </div>
+            <div class="disclaimer-text">
+              <strong>Demo local vault data:</strong> All email, calendar, notes, and files are stored strictly inside your local database (<code class="code-pill">data/db.json</code>) via the local backend. No data leaves this device. Not connected to external Google or system accounts.
+            </div>
+          </div>
+
+          <!-- Top Metrics Cards Grid -->
+          <div class="dashboard-cards-grid">
+            <div class="metric-card metric-email" data-goto="email">
+              <div class="metric-header">
+                <span class="metric-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                </span>
+                <span class="metric-status-badge badge-unread" id="dash-unread-badge">3 unread</span>
+              </div>
+              <div class="metric-body">
+                <div class="metric-count" id="dash-email-count">4</div>
+                <div class="metric-label">Local Emails</div>
+                <div class="metric-sub" id="dash-email-sub">Latest: Priya Sharma (Roadmap sync)</div>
+              </div>
+              <div class="metric-action">
+                <span>View Inbox &rarr;</span>
+              </div>
+            </div>
+
+            <div class="metric-card metric-calendar" data-goto="calendar">
+              <div class="metric-header">
+                <span class="metric-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                </span>
+                <span class="metric-status-badge badge-today" id="dash-cal-badge">Today</span>
+              </div>
+              <div class="metric-body">
+                <div class="metric-count" id="dash-cal-count">3</div>
+                <div class="metric-label">Today's Schedule</div>
+                <div class="metric-sub" id="dash-cal-sub">Next: 2:00 PM Sync with Priya</div>
+              </div>
+              <div class="metric-action">
+                <span>Manage Schedule &rarr;</span>
+              </div>
+            </div>
+
+            <div class="metric-card metric-notes" data-goto="notes">
+              <div class="metric-header">
+                <span class="metric-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v5h5"/></svg>
+                </span>
+                <span class="metric-status-badge badge-vault">Vault</span>
+              </div>
+              <div class="metric-body">
+                <div class="metric-count" id="dash-notes-count">4</div>
+                <div class="metric-label">Encrypted Notes</div>
+                <div class="metric-sub" id="dash-notes-sub">Updated 10m ago</div>
+              </div>
+              <div class="metric-action">
+                <span>Browse Notes &rarr;</span>
+              </div>
+            </div>
+
+            <div class="metric-card metric-files" data-goto="files">
+              <div class="metric-header">
+                <span class="metric-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20a2 2 0 0 0 2-2V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2Z"/><path d="M14 2v6h6"/></svg>
+                </span>
+                <span class="metric-status-badge badge-files" id="dash-files-badge">Sandbox</span>
+              </div>
+              <div class="metric-body">
+                <div class="metric-count" id="dash-files-count">5</div>
+                <div class="metric-label">Local Files</div>
+                <div class="metric-sub" id="dash-files-sub">Includes old invoice.pdf</div>
+              </div>
+              <div class="metric-action">
+                <span>Inspect Files &rarr;</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Central Agent Command & Chat Interface -->
+          <div class="agent-console-section">
+            <div class="console-card">
+              <div class="console-header">
+                <div class="console-title-group">
+                  <div class="agent-avatar">
+                    <span class="agent-indicator"></span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><rect width="18" height="12" x="3" y="10" rx="4"/><circle cx="8" cy="15" r="1.5"/><circle cx="16" cy="15" r="1.5"/><path d="M9 19h6"/></svg>
+                  </div>
+                  <div>
+                    <div class="console-title">PrivatePilot Command Core</div>
+                    <div class="console-policy-text">
+                      <span class="policy-pill green">Safe Tool-Use Policy</span>
+                      <span class="policy-note">Read-only runs instantly • Destructive/Writes ask confirmation</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="console-tools">
+                  <button class="btn btn-outline-xs" id="btn-clear-chat" title="Clear conversation stream">Clear Chat</button>
+                </div>
+              </div>
+
+              <!-- Suggested Command Chips Bar -->
+              <div class="suggested-commands-bar">
+                <span class="suggested-label">Suggested actions:</span>
+                <div class="chip-container">
+                  <button class="command-chip" data-cmd="Summarize unread emails">
+                    <span class="chip-icon">📧</span>
+                    <span>Summarize unread emails</span>
+                    <span class="safety-indicator safe" title="Read-only action: runs instantly">SAFE</span>
+                  </button>
+
+                  <button class="command-chip" data-cmd="What is on my calendar today?">
+                    <span class="chip-icon">📅</span>
+                    <span>What is on my calendar today?</span>
+                    <span class="safety-indicator safe" title="Read-only action: runs instantly">SAFE</span>
+                  </button>
+
+                  <button class="command-chip" data-cmd="Create a note: submit project by 3:30 PM">
+                    <span class="chip-icon">📝</span>
+                    <span>Create a note: submit project by 3:30 PM</span>
+                    <span class="safety-indicator write" title="Local Write action: creates note">WRITE</span>
+                  </button>
+
+                  <button class="command-chip chip-destructive" data-cmd="Delete old invoice.pdf">
+                    <span class="chip-icon">🗑️</span>
+                    <span>Delete old invoice.pdf</span>
+                    <span class="safety-indicator danger" title="Destructive action: triggers confirmation modal">CONFIRM</span>
+                  </button>
+
+                  <button class="command-chip" data-cmd="Draft a reply to Priya">
+                    <span class="chip-icon">✍️</span>
+                    <span>Draft a reply to Priya</span>
+                    <span class="safety-indicator draft" title="Draft modal: review before save">DRAFT</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Chat / Agent Execution Stream -->
+              <div class="chat-stream" id="chat-stream">
+                <!-- Welcome Agent Message -->
+                <div class="chat-message message-agent">
+                  <div class="msg-avatar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><rect width="18" height="12" x="3" y="10" rx="4"/></svg>
+                  </div>
+                  <div class="msg-content">
+                    <div class="msg-meta">
+                      <span class="msg-author">PrivatePilot (Phi-3 Mini Local)</span>
+                      <span class="msg-time">Just now</span>
+                      <span class="msg-safety-tag">On-Device Sandbox</span>
+                    </div>
+                    <div class="msg-body">
+                      <p>Hello! I am your <strong>local-first personal agent</strong>. I run strictly on your device with <strong>zero telemetry and zero data leakage</strong>.</p>
+                      <p>My tool-use engine follows strict safety principles:</p>
+                      <ul class="clean-bullet-list">
+                        <li><strong>Read-only tools</strong> (reading emails, scanning agenda) execute immediately.</li>
+                        <li><strong>Destructive tools</strong> (deleting files, deleting notes) always pause and require your explicit interactive confirmation.</li>
+                        <li><strong>External dispatch</strong> is permanently disabled—email replies remain local drafts.</li>
+                      </ul>
+                      <p>Click any suggested prompt above or type a command below to test!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Command Input Bar -->
+              <div class="command-input-container">
+                <form id="command-form" class="command-form">
+                  <div class="input-prefix">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>
+                  </div>
+                  <input
+                    type="text"
+                    id="command-input"
+                    class="command-input"
+                    placeholder="Enter command (e.g., 'Summarize unread emails', 'Delete old invoice.pdf', or ask anything)..."
+                    autocomplete="off"
+                  >
+                  <button type="submit" class="btn btn-primary btn-send" id="btn-submit-cmd">
+                    <span>Execute</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Dashboard Mini Audit Stream -->
+            <div class="dashboard-audit-widget">
+              <div class="audit-widget-header">
+                <div class="widget-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                  <span>Real-Time Tool-Use Audit Trail</span>
+                </div>
+                <button class="link-btn" data-goto="privacy">View Full Log &rarr;</button>
+              </div>
+              <div class="audit-widget-body" id="dash-audit-list">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. EMAIL TAB -->
+        <section class="tab-pane" id="tab-email">
+          <div class="tab-header-row">
+            <div>
+              <h2 class="section-title">Local Email Vault</h2>
+              <p class="section-desc">Sample simulated on-device emails. No network synchronization.</p>
+            </div>
+            <div class="action-buttons-group">
+              <button class="btn btn-primary" id="btn-summarize-emails-action">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+                Summarize Unread Emails
+              </button>
+              <button class="btn btn-secondary" id="btn-quick-draft-action">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                Draft Reply to Priya
+              </button>
+            </div>
+          </div>
+
+          <div class="email-view-container">
+            <!-- Email List -->
+            <div class="email-list-column">
+              <div class="filter-bar">
+                <div class="filter-chips">
+                  <button class="filter-pill active" data-email-filter="all">All (4)</button>
+                  <button class="filter-pill" data-email-filter="unread">Unread (3)</button>
+                  <button class="filter-pill" data-email-filter="starred">Starred (1)</button>
+                </div>
+                <span class="safe-badge-pill">Vault Sandbox</span>
+              </div>
+              <div class="email-list" id="email-items-container">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+
+            <!-- Email Detail / Reading Pane -->
+            <div class="email-reading-column">
+              <div class="email-reading-card" id="email-detail-container">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. CALENDAR TAB -->
+        <section class="tab-pane" id="tab-calendar">
+          <div class="tab-header-row">
+            <div>
+              <h2 class="section-title">Local Calendar Schedule</h2>
+              <p class="section-desc">Today's on-device timetable. Mutating events prompts for tool safety authorization.</p>
+            </div>
+            <div class="action-buttons-group">
+              <button class="btn btn-primary" id="btn-add-event-modal">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+                Add Local Event
+              </button>
+              <button class="btn btn-secondary" id="btn-ask-cal-agent">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+                Ask Agent for Agenda
+              </button>
+            </div>
+          </div>
+
+          <div class="calendar-layout">
+            <div class="calendar-timeline-card">
+              <div class="calendar-header-meta">
+                <div class="date-badge-large">
+                  <span class="cal-day">Wednesday</span>
+                  <span class="cal-date">October 7, 2026</span>
+                </div>
+                <div class="timeline-status-info">
+                  <span class="status-indicator-dot"></span>
+                  <span>Local Vault Calendar • No cloud sync</span>
+                </div>
+              </div>
+
+              <div class="timeline-list" id="calendar-events-container">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+
+            <div class="calendar-sidebar-card">
+              <h3 class="card-subtitle">Local Safety Rule</h3>
+              <p class="text-muted small">Reading calendar schedule happens instantly with zero clicks. Adding or deleting calendar items is treated as a <strong>Local Mutation</strong> requiring explicit confirmation before committing to storage.</p>
+
+              <div class="safety-rule-box">
+                <div class="rule-header">
+                  <span class="rule-tag safe">READ_CALENDAR</span>
+                  <span class="rule-behavior">Immediate</span>
+                </div>
+                <div class="rule-header">
+                  <span class="rule-tag write">ADD_EVENT</span>
+                  <span class="rule-behavior">Requires Prompt</span>
+                </div>
+                <div class="rule-header">
+                  <span class="rule-tag danger">DELETE_EVENT</span>
+                  <span class="rule-behavior">Requires Confirm</span>
+                </div>
+              </div>
+
+              <div class="quick-add-shortcut">
+                <h4 class="shortcut-title">Test Agent Scheduling:</h4>
+                <button class="btn btn-outline-sm btn-block" id="btn-shortcut-add-review">
+                  Schedule "1-on-1 Prep" at 1:15 PM
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. NOTES TAB -->
+        <section class="tab-pane" id="tab-notes">
+          <div class="tab-header-row">
+            <div>
+              <h2 class="section-title">Local Encrypted Notes</h2>
+              <p class="section-desc">Create, search, edit, and delete notes stored in browser localStorage.</p>
+            </div>
+            <div class="action-buttons-group">
+              <button class="btn btn-primary" id="btn-create-note-modal">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+                Create New Note
+              </button>
+            </div>
+          </div>
+
+          <div class="notes-toolbar">
+            <div class="search-input-wrapper">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>
+              <input type="text" id="notes-search-input" placeholder="Search notes by keyword or tag..." autocomplete="off">
+            </div>
+            <div class="notes-category-filters" id="notes-category-filters">
+              <button class="filter-pill active" data-cat="all">All</button>
+              <button class="filter-pill" data-cat="Work">Work</button>
+              <button class="filter-pill" data-cat="Architecture">Architecture</button>
+              <button class="filter-pill" data-cat="Personal">Personal</button>
+            </div>
+          </div>
+
+          <div class="notes-grid" id="notes-grid-container">
+            <!-- Populated via JS -->
+          </div>
+        </section>
+
+        <!-- 5. FILES TAB -->
+        <section class="tab-pane" id="tab-files">
+          <div class="tab-header-row">
+            <div>
+              <h2 class="section-title">Local Mock Vault Files</h2>
+              <p class="section-desc">Demo local files. Destructive actions (like file deletion) strictly require explicit confirmation.</p>
+            </div>
+            <div class="action-buttons-group">
+              <button class="btn btn-danger-outline" id="btn-trigger-delete-invoice">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                Test Delete "old invoice.pdf"
+              </button>
+            </div>
+          </div>
+
+          <div class="files-container-card">
+            <div class="files-meta-header">
+              <div class="storage-usage-bar-group">
+                <div class="storage-label-row">
+                  <span>Local Storage Quota (Simulated)</span>
+                  <span id="files-quota-text">1.4 MB / 50 MB (2.8%)</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" style="width: 8%;"></div>
+                </div>
+              </div>
+              <div class="files-badge-tag">
+                <span class="safe-pulse"></span>
+                <span>Protected Sandbox Directory</span>
+              </div>
+            </div>
+
+            <div class="files-table-wrapper">
+              <table class="files-table">
+                <thead>
+                  <tr>
+                    <th>Filename</th>
+                    <th>Type</th>
+                    <th>Size</th>
+                    <th>Modified</th>
+                    <th>Permissions</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="files-table-body">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. PRIVACY & AUDIT TAB -->
+        <section class="tab-pane" id="tab-privacy">
+          <div class="tab-header-row">
+            <div>
+              <h2 class="section-title">Privacy Architecture & Audit Log</h2>
+              <p class="section-desc">Full transparency: see how local inference protects your data and inspect every tool execution.</p>
+            </div>
+            <div class="action-buttons-group">
+              <button class="btn btn-outline-sm" id="btn-export-audit">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                Export Audit JSON
+              </button>
+              <button class="btn btn-outline-sm" id="btn-clear-audit">Clear Log</button>
+            </div>
+          </div>
+
+          <!-- Privacy Architecture Pillars -->
+          <div class="privacy-pillars-grid">
+            <div class="pillar-card">
+              <div class="pillar-icon green">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <h3 class="pillar-title">1. All Data Stays On-Device</h3>
+              <p class="pillar-desc">Your emails, calendar, personal notes, and files reside exclusively in client-side storage (<code class="code-pill">localStorage</code>). No servers, no telemetry, and zero outbound network payloads.</p>
+              <div class="pillar-stat">
+                <span class="stat-highlight">0 Bytes</span>
+                <span class="stat-sub">Transmitted outside browser</span>
+              </div>
+            </div>
+
+            <div class="pillar-card">
+              <div class="pillar-icon violet">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              </div>
+              <h3 class="pillar-title">2. Local Open-Weight Model</h3>
+              <p class="pillar-desc">Simulates a quantized <strong>Phi-3 Mini</strong> architecture running on WebGPU / local engine. You control the weights, you own the weights, and prompt processing happens in-memory without cloud inference APIs.</p>
+              <div class="pillar-stat">
+                <span class="stat-highlight">Phi-3 Mini</span>
+                <span class="stat-sub">Open-weight 3.8B parameter concept</span>
+              </div>
+            </div>
+
+            <div class="pillar-card">
+              <div class="pillar-icon amber">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              </div>
+              <h3 class="pillar-title">3. Permission-Gated Tools</h3>
+              <p class="pillar-desc">Agents can easily hallucinate or overreach. PrivatePilot enforces explicit human-in-the-loop gating for all write and destructive actions: file deletion, event creation, and external dispatch prevention.</p>
+              <div class="pillar-stat">
+                <span class="stat-highlight">Strict Gating</span>
+                <span class="stat-sub">Zero unconfirmed deletions</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comprehensive Audit Log Section -->
+          <div class="audit-full-card">
+            <div class="audit-full-header">
+              <div class="audit-header-title">
+                <h3>Comprehensive Agent Audit Trail</h3>
+                <p>Every tool execution, permission prompt, approval, and refusal is recorded here for audit verification.</p>
+              </div>
+              <div class="audit-filter-controls">
+                <select id="audit-filter-select" class="select-input">
+                  <option value="all">All Events</option>
+                  <option value="READ">Read-Only Actions</option>
+                  <option value="WRITE">Local Writes</option>
+                  <option value="DESTRUCTIVE">Destructive Actions</option>
+                  <option value="CONFIRMATION">Permission Prompts</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="audit-timeline-container" id="full-audit-container">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. DESTRUCTIVE CONFIRMATION MODAL -->
+  <div class="modal-backdrop" id="modal-confirm-delete" role="dialog" aria-modal="true" aria-labelledby="modal-delete-title">
+    <div class="modal-dialog modal-danger">
+      <div class="modal-header">
+        <div class="modal-danger-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+        </div>
+        <div class="modal-title-wrap">
+          <h3 class="modal-title" id="modal-delete-title">Confirm Destructive Action</h3>
+          <span class="modal-subtitle">Agent Tool-Use Permission Request</span>
+        </div>
+        <button class="modal-close-btn" id="modal-delete-close" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="danger-callout">
+          <p>The local agent requested execution of a destructive file system tool:</p>
+          <div class="code-block-danger">
+            <code>vault.files.delete("<span id="delete-target-filename">old invoice.pdf</span>")</code>
+          </div>
+        </div>
+
+        <p class="warning-text">
+          <strong>Warning:</strong> Deleting <span class="highlight-text" id="delete-target-name-bold">old invoice.pdf</span> will permanently remove it from your local storage vault. <strong>This action cannot be undone.</strong>
+        </p>
+
+        <div class="safety-audit-notice">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>This action will be permanently recorded in your local audit log.</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="modal-delete-btn-cancel">Cancel (Abort)</button>
+        <button class="btn btn-danger" id="modal-delete-btn-confirm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+          Confirm Permanent Deletion
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. DRAFT REPLY MODAL -->
+  <div class="modal-backdrop" id="modal-draft-reply" role="dialog" aria-modal="true" aria-labelledby="modal-draft-title">
+    <div class="modal-dialog modal-draft">
+      <div class="modal-header">
+        <div class="modal-header-icon draft-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <div class="modal-title-wrap">
+          <h3 class="modal-title" id="modal-draft-title">Local Email Draft</h3>
+          <span class="modal-subtitle">AI-assisted response • Sandbox isolation</span>
+        </div>
+        <button class="modal-close-btn" id="modal-draft-close" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Prominent Safety Notice: Never Send Anything -->
+        <div class="sandbox-security-banner">
+          <div class="shield-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>LOCAL-ONLY SANDBOX</span>
+          </div>
+          <p><strong>External dispatch is strictly disabled by policy.</strong> This agent will never connect to an SMTP server or transmit messages over the internet. You can only save this draft locally or discard it.</p>
+        </div>
+
+        <form id="draft-reply-form" class="draft-form">
+          <div class="form-group">
+            <label for="draft-to">Recipient:</label>
+            <input type="text" id="draft-to" class="input-text" value="Priya Sharma &lt;priya.sharma@internal.local&gt;" readonly>
+          </div>
+
+          <div class="form-group">
+            <label for="draft-subject">Subject:</label>
+            <input type="text" id="draft-subject" class="input-text" value="Re: Q4 Strategic Roadmap &amp; Sync tomorrow">
+          </div>
+
+          <div class="form-group">
+            <div class="label-with-meta">
+              <label for="draft-body">Proposed Reply (Generated by Phi-3 Mini):</label>
+              <span class="meta-tag">Review required</span>
+            </div>
+            <textarea id="draft-body" class="input-textarea" rows="7">Hi Priya,
+
+Thanks for sharing the Q4 roadmap slides. I've reviewed the preliminary milestones and confirmed that all local-first agent deliverables align with our target timeline.
+
+I will have the updated architecture diagram ready for our sync at 2:00 PM today. Let me know if you need any additional prep points before we meet.
+
+Best regards,
+Alex</textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="modal-draft-btn-discard">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+          Discard Draft
+        </button>
+        <button class="btn btn-primary" id="modal-draft-btn-save">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save Draft to Local Vault
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. ADD CALENDAR EVENT MODAL (WITH CONFIRMATION) -->
+  <div class="modal-backdrop" id="modal-add-event" role="dialog" aria-modal="true" aria-labelledby="modal-event-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-header-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+        </div>
+        <div class="modal-title-wrap">
+          <h3 class="modal-title" id="modal-event-title">Add Local Event</h3>
+          <span class="modal-subtitle">Local calendar write permission request</span>
+        </div>
+        <button class="modal-close-btn" id="modal-event-close">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="permission-notice-banner">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <span>The agent will commit this schedule item to your browser's local calendar vault upon confirmation.</span>
+        </div>
+
+        <form id="add-event-form" class="event-form">
+          <div class="form-group">
+            <label for="event-title-input">Event Title:</label>
+            <input type="text" id="event-title-input" class="input-text" placeholder="e.g., Architecture Review" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="event-time-input">Time:</label>
+              <input type="text" id="event-time-input" class="input-text" placeholder="e.g., 03:00 PM" required>
+            </div>
+            <div class="form-group">
+              <label for="event-duration-input">Duration:</label>
+              <input type="text" id="event-duration-input" class="input-text" placeholder="e.g., 45 mins" value="45 mins">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="event-location-input">Location / Context:</label>
+            <input type="text" id="event-location-input" class="input-text" placeholder="e.g., Local Meeting Room / Workstation" value="Local Workstation">
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="modal-event-btn-cancel">Cancel</button>
+        <button class="btn btn-primary" id="modal-event-btn-save">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Confirm &amp; Add Event
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. NOTE MODAL (CREATE / EDIT) -->
+  <div class="modal-backdrop" id="modal-note-editor" role="dialog" aria-modal="true" aria-labelledby="modal-note-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-header-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v5h5"/></svg>
+        </div>
+        <div class="modal-title-wrap">
+          <h3 class="modal-title" id="modal-note-title">Create Local Note</h3>
+          <span class="modal-subtitle">Stored safely in browser localStorage</span>
+        </div>
+        <button class="modal-close-btn" id="modal-note-close">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="note-editor-form" class="note-form">
+          <input type="hidden" id="note-edit-id">
+
+          <div class="form-group">
+            <label for="note-title-input">Title:</label>
+            <input type="text" id="note-title-input" class="input-text" placeholder="Note title..." required>
+          </div>
+
+          <div class="form-group">
+            <label for="note-category-select">Category:</label>
+            <select id="note-category-select" class="select-input">
+              <option value="Work">Work</option>
+              <option value="Architecture">Architecture</option>
+              <option value="Tasks">Tasks</option>
+              <option value="Personal">Personal</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="note-content-input">Content:</label>
+            <textarea id="note-content-input" class="input-textarea" rows="8" placeholder="Enter note contents..." required></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="modal-note-btn-cancel">Cancel</button>
+        <button class="btn btn-primary" id="modal-note-btn-save">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>
+          Save Note to Vault
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. FILE PREVIEW MODAL -->
+  <div class="modal-backdrop" id="modal-file-preview" role="dialog" aria-modal="true" aria-labelledby="modal-preview-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-header-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="modal-title-wrap">
+          <h3 class="modal-title" id="modal-preview-title">File Preview</h3>
+          <span class="modal-subtitle" id="modal-preview-sub">Local Vault File</span>
+        </div>
+        <button class="modal-close-btn" id="modal-preview-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="file-preview-content" id="modal-preview-body">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="modal-preview-btn-close">Close</button>
+        <button class="btn btn-danger-outline" id="modal-preview-btn-delete">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+          Delete File
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- App Script -->
+  <script src="app.js"></script>
+</body>
+</html>
