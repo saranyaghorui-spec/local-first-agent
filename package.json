@@ -1,0 +1,12 @@
+{
+  "name": "local-first-agent",
+  "version": "1.0.0",
+  "description": "PrivatePilot — Local-First Personal Agent with On-Device Backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test:api": "node test-backend.js"
+  },
+  "author": "",
+  "license": "MIT"
+}

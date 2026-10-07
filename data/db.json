@@ -1,0 +1,263 @@
+{
+  "emails": [
+    {
+      "id": "em-1",
+      "from": "Priya Sharma",
+      "email": "priya.sharma@internal.local",
+      "subject": "Q4 Strategic Roadmap & Sync tomorrow",
+      "date": "Today, 10:45 AM",
+      "unread": false,
+      "starred": true,
+      "snippet": "Hi Alex, I've drafted the preliminary slides for our local agent architecture sync tomorrow at 2 PM. Please review slide 4...",
+      "body": "Hi Alex,\n\nI've drafted the preliminary slides for our local agent architecture sync tomorrow at 2:00 PM. \n\nPlease review slide 4 regarding the on-device inference latency targets (sub-150ms on Phi-3 Mini) and the zero-exfiltration compliance audit. Let me know by 4:00 PM if we need to adjust any milestones before our discussion.\n\nBest,\nPriya Sharma\nVP of Product Engineering"
+    },
+    {
+      "id": "em-2",
+      "from": "Security & Compliance Officer",
+      "email": "security-audit@internal.local",
+      "subject": "Monthly Local Backup Verification Notice",
+      "date": "Today, 08:30 AM",
+      "unread": false,
+      "starred": false,
+      "snippet": "Reminder: Periodic check of your encrypted local vault sandbox. All keys and file metadata must remain on-device...",
+      "body": "Notice to all engineers:\n\nThis is a reminder to verify your local storage quota and encrypted sandbox integrity. As per our zero-telemetry posture, PrivatePilot instances must never bind to external sockets or upload user notes to cloud endpoints.\n\nVerify that your sandbox contains only approved workspace documents and clean up obsolete billing receipts (e.g. old invoice.pdf).\n\nSecurity & Integrity Team"
+    },
+    {
+      "id": "em-3",
+      "from": "DevRel / Billing Support",
+      "email": "billing-receipts@services.local",
+      "subject": "Invoice #INV-2026-882 Renewal Notice",
+      "date": "Yesterday, 04:15 PM",
+      "unread": true,
+      "starred": false,
+      "snippet": "Attached is the archival receipt for your local compute cluster seat. Reference document: old invoice.pdf in your local vault...",
+      "body": "Hello,\n\nYour monthly local compute workstation tier renewal receipt is ready for archival. \nThe generated file 'old invoice.pdf' was saved to your local downloads vault sandbox. \n\nIf this expense has already been processed by finance, you may safely delete old invoice.pdf from your local drive.\n\nReference: #INV-2026-882"
+    },
+    {
+      "id": "em-4",
+      "from": "Alex Chen (Tech Lead)",
+      "email": "alex.chen@internal.local",
+      "subject": "Architecture RFC: SQLite Vector Indexing on Device",
+      "date": "Oct 5, 03:20 PM",
+      "unread": false,
+      "starred": false,
+      "snippet": "We tested sqlite-vec with 384-dimensional embeddings directly in WebGPU. Query performance is exceptionally fast...",
+      "body": "Team,\n\nI've concluded our benchmarks comparing server-side vector search vs local sqlite-vec running in client memory. \n\nResults show 8ms retrieval across 50,000 document chunks with zero network roundtrip. This confirms our hypothesis that a 3.8B parameter local model (Phi-3 Mini) paired with local vector embeddings provides full privacy without degrading context quality.\n\nLet's discuss during our 11:00 AM architecture review today.\n\nAlex Chen"
+    }
+  ],
+  "events": [
+    {
+      "id": "ev-1",
+      "title": "Daily Engineering Sync",
+      "time": "09:30 AM",
+      "duration": "30 mins",
+      "location": "Local Workstation",
+      "category": "Team"
+    },
+    {
+      "id": "ev-2",
+      "title": "Architecture Review: Local Vector Store",
+      "time": "11:00 AM",
+      "duration": "45 mins",
+      "location": "Conference Alpha (Local)",
+      "category": "Architecture"
+    },
+    {
+      "id": "ev-3",
+      "title": "Quarterly Strategy with Priya Sharma",
+      "time": "02:00 PM",
+      "duration": "60 mins",
+      "location": "Executive Sync Desk",
+      "category": "Strategy"
+    }
+  ],
+  "notes": [
+    {
+      "id": "nt-1",
+      "title": "Project Delta Milestones (Q4)",
+      "category": "Work",
+      "date": "Today, 11:20 AM",
+      "content": "1. Complete on-device quantized model validation (Phi-3 Mini).\n2. Implement strict confirmation gates for file deletion and destructive tools.\n3. Benchmark local response latency under 300ms.\n4. Deliver zero-network telemetry compliance report."
+    },
+    {
+      "id": "nt-2",
+      "title": "Local Agent Architecture Notes (Phi-3 + Tools)",
+      "category": "Architecture",
+      "date": "Oct 6, 02:40 PM",
+      "content": "Core Philosophy: The agent has full read visibility into local personal vault items (email, calendar, notes) for immediate assistance, but zero direct write/delete authority without explicit human-in-the-loop sign-off. External dispatch is blocked at the sandbox runtime."
+    },
+    {
+      "id": "nt-3",
+      "title": "Meeting Takeaways - Client Advisory",
+      "category": "Work",
+      "date": "Oct 5, 05:15 PM",
+      "content": "Key requirement from advisory group: Users must see visual proof that zero bytes leave their machine. Include an interactive audit log and explicit confirmation modal before any permanent state change."
+    },
+    {
+      "id": "nt-4",
+      "title": "Quick Scratchpad",
+      "category": "Personal",
+      "date": "Oct 4, 09:00 AM",
+      "content": "Order replacement USB-C privacy hardware key. Check local disk space quota. Review local Ollama / WebGPU benchmarks."
+    }
+  ],
+  "files": [
+    {
+      "id": "fl-1",
+      "name": "old invoice.pdf",
+      "type": "PDF Document",
+      "size": "142 KB",
+      "date": "Oct 2, 2026",
+      "perm": "Destructive Confirmation Required",
+      "isTarget": true,
+      "content": "INVOICE #INV-2026-882 (ARCHIVED)\nDate: October 2, 2026\nItem: On-Device Compute Workstation License\nStatus: Paid / Archival copy\nNote: Safe to delete once expensed."
+    },
+    {
+      "id": "fl-2",
+      "name": "q4_product_roadmap.docx",
+      "type": "Word Document",
+      "size": "420 KB",
+      "date": "Oct 5, 2026",
+      "perm": "Read/Write Protected",
+      "isTarget": false,
+      "content": "CONFIDENTIAL — INTERNAL PRODUCT ROADMAP Q4 2026\nStrategic Objective: PrivatePilot Local-First Agent Deployment\n- Milestone 1: Local vault isolation\n- Milestone 2: Safe tool confirmation system\n- Milestone 3: On-device Phi-3 Mini inference"
+    },
+    {
+      "id": "fl-3",
+      "name": "client_nda_privacypilot.pdf",
+      "type": "PDF Document",
+      "size": "310 KB",
+      "date": "Sep 28, 2026",
+      "perm": "Read-Only Vault",
+      "isTarget": false,
+      "content": "NON-DISCLOSURE AGREEMENT\nBetween: PrivatePilot Labs & Enterprise Partner\nTerms: Zero telemetry, zero cloud exfiltration guarantee."
+    },
+    {
+      "id": "fl-4",
+      "name": "phi3_quantized_weights_manifest.json",
+      "type": "Config / JSON",
+      "size": "18 KB",
+      "date": "Oct 1, 2026",
+      "perm": "System Core",
+      "isTarget": false,
+      "content": "{\n  \"model\": \"Phi-3-mini-4k-instruct\",\n  \"quantization\": \"q4_k_m\",\n  \"context_window\": 4096,\n  \"runtime\": \"WebGPU / Local DirectML\",\n  \"telemetry\": false\n}"
+    },
+    {
+      "id": "fl-5",
+      "name": "notes_export_encrypted.db",
+      "type": "SQLite Database",
+      "size": "520 KB",
+      "date": "Oct 6, 2026",
+      "perm": "Encrypted Sandbox",
+      "isTarget": false,
+      "content": "SQLite 3 database format with AES-GCM local encrypted tables for offline notes and embeddings."
+    }
+  ],
+  "drafts": [
+    {
+      "id": "dr-1791365980922",
+      "to": "Priya Sharma <priya.sharma@internal.local>",
+      "subject": "Re: Q4 Strategic Roadmap & Sync tomorrow",
+      "body": "Hi Priya,\n\nThanks for following up on the Q4 roadmap. I have reviewed the preliminary milestones and confirmed that all local-first agent deliverables align with our target timeline.\n\nI will have the updated architecture diagram ready for our sync at 2:00 PM today. Let me know if you need any additional prep points before we meet.\n\nBest regards,\nAlex",
+      "date": "Just now"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "log-1791365982779-918",
+      "timestamp": "15:09:42",
+      "type": "WRITE",
+      "tool": "vault.emails.mark_read(\"em-2\")",
+      "status": "AUTO_APPROVED",
+      "text": "Marked email from Security & Compliance Officer as read.",
+      "item": "Monthly Local Backup Verification Notice"
+    },
+    {
+      "id": "log-1791365982742-172",
+      "timestamp": "15:09:42",
+      "type": "WRITE",
+      "tool": "vault.emails.mark_read(\"em-2\")",
+      "status": "AUTO_APPROVED",
+      "text": "Marked email from Security & Compliance Officer as read.",
+      "item": "Monthly Local Backup Verification Notice"
+    },
+    {
+      "id": "log-1791365980974-400",
+      "timestamp": "15:09:40",
+      "type": "WRITE",
+      "tool": "vault.mail.save_draft(\"dr-1791365980922\")",
+      "status": "AUTO_APPROVED",
+      "text": "Saved local email draft to \"Priya Sharma <priya.sharma@internal.local>\". Stored on-device without transmission.",
+      "item": "Re: Q4 Strategic Roadmap & Sync tomorrow"
+    },
+    {
+      "id": "log-1791365980930-672",
+      "timestamp": "15:09:40",
+      "type": "WRITE",
+      "tool": "vault.mail.save_draft(\"dr-1791365980922\")",
+      "status": "AUTO_APPROVED",
+      "text": "Saved local email draft to \"Priya Sharma <priya.sharma@internal.local>\". Stored on-device without network transmission.",
+      "item": "Re: Q4 Strategic Roadmap & Sync tomorrow"
+    },
+    {
+      "id": "log-1791365978244-382",
+      "timestamp": "15:09:38",
+      "type": "READ",
+      "tool": "vault.mail.generate_draft(\"em-1\")",
+      "status": "AUTO_APPROVED",
+      "text": "Generated safe local draft reply for Priya Sharma. External dispatch disabled.",
+      "item": "Q4 Strategic Roadmap & Sync tomorrow"
+    },
+    {
+      "id": "log-1791365976214-483",
+      "timestamp": "15:09:36",
+      "type": "WRITE",
+      "tool": "vault.emails.mark_read(\"em-1\")",
+      "status": "AUTO_APPROVED",
+      "text": "Marked email from Priya Sharma as read.",
+      "item": "Q4 Strategic Roadmap & Sync tomorrow"
+    },
+    {
+      "id": "log-1791365976173-728",
+      "timestamp": "15:09:36",
+      "type": "WRITE",
+      "tool": "vault.emails.mark_read(\"em-1\")",
+      "status": "AUTO_APPROVED",
+      "text": "Marked email from Priya Sharma as read.",
+      "item": "Q4 Strategic Roadmap & Sync tomorrow"
+    },
+    {
+      "id": "log-1791365085495-634",
+      "timestamp": "14:54:45",
+      "type": "WRITE",
+      "tool": "vault.system.reset_demo_data()",
+      "status": "USER_APPROVED",
+      "text": "Restored all sample email, calendar, notes, files, and audit logs to initial seed defaults.",
+      "item": "Demo Vault State"
+    },
+    {
+      "id": "log-1",
+      "timestamp": "09:00:12",
+      "type": "READ",
+      "tool": "vault.system.init()",
+      "status": "AUTO_APPROVED",
+      "text": "Local Vault sandbox initialized in local database. Zero outbound sockets opened."
+    },
+    {
+      "id": "log-2",
+      "timestamp": "09:00:13",
+      "type": "READ",
+      "tool": "model.runtime.load('Phi-3-Mini')",
+      "status": "AUTO_APPROVED",
+      "text": "Loaded on-device quantized small model weights into local sandbox memory."
+    },
+    {
+      "id": "log-3",
+      "timestamp": "09:15:20",
+      "type": "READ",
+      "tool": "vault.security.verify_csp()",
+      "status": "AUTO_APPROVED",
+      "text": "Content Security Policy check passed: 0 outbound connections permitted."
+    }
+  ]
+}

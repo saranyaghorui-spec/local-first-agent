@@ -1,134 +1,80 @@
 # PrivatePilot — Local-First Personal Agent
 
-> **On-Device Personal Intelligence • Zero Network Telemetry • Safe Tool-Use Execution**
+PrivatePilot is an offline, localhost-only prototype of a privacy-first personal agent. It works with **demo vault data** for email, calendar events, notes, files, and drafts. It never connects to a cloud service, real email account, or actual computer files.
 
-**PrivatePilot** is a frontend demonstration of a privacy-first personal AI assistant. Designed around open-weight small language models (such as **Phi-3 Mini**), PrivatePilot manages your **emails, calendar schedule, encrypted personal notes, and local files** directly on your device.
+## What works
 
-**Core Principle:** *No data leaves this device.* All information is stored in client-side storage (`localStorage`) within a sandbox.
+- Read and summarize demo emails, calendar entries, notes, and file records.
+- Create, edit, and delete local notes.
+- Create and delete local calendar events.
+- Generate and save local-only email drafts; sending email is not implemented.
+- Delete a **demo vault record** only by using a two-step, short-lived confirmation token.
+- Store all demo data and audit history in `data/db.json`, so changes remain after refreshing the browser.
+- Show an audit trail of safe reads, writes, confirmation prompts, cancellations, and approved deletions.
 
----
-
-## 🛡️ Safety & Tool-Use Architecture
-
-Modern personal agents frequently risk unauthorized actions or cloud data leakage. PrivatePilot demonstrates an explicit **Tiered Safe Tool-Use Policy**:
-
-| Action Tier | Tool Category | Examples | Enforcement Policy |
-| :--- | :--- | :--- | :--- |
-| **Tier 1 (Safe)** | Read-Only | Email scanning, calendar queries, searching notes, listing files | **Executes immediately** with automatic audit logging. Zero clicks required. |
-| **Tier 2 (Mutation)** | Local Writes | Adding calendar events, saving new notes | **Interactive Confirmation Dialog** before committing changes to storage. |
-| **Tier 3 (Destructive)** | Irreversible Ops | Deleting files (`old invoice.pdf`), deleting notes | **Explicit Destructive Confirmation Modal** displaying target name, warning of irreversibility, and Cancel/Confirm choices. |
-| **Tier 4 (Outbound)** | External Dispatch | Sending email replies | **Strictly Disabled by Policy**. External networks are blocked; replies can only be saved as local drafts. |
-
----
-
-## 🌟 Key Features
-
-1. **Local-Only Sandbox**
-   - Green `● LOCAL ONLY` badge and network traffic monitor showing `0 B Exfiltrated`.
-   - Clear banner stating that all emails, calendar entries, notes, and files are **Demo local vault data** residing entirely within the browser.
-2. **On-Device Small Model (Phi-3 Mini Concept)**
-   - Simulates local quantized open-weight inference (~3.8B parameters) running via WebGPU / local DirectML.
-   - Zero API keys, zero cloud subscriptions, zero third-party telemetry.
-3. **Interactive Command Console**
-   - Natural language input bar and 5 realistic one-click suggested actions:
-     - 📧 **"Summarize unread emails"**: Scans 3 unread seeded emails and generates an actionable bulleted digest.
-     - 📅 **"What is on my calendar today?"**: Retrieves today's schedule and flags upcoming meetings.
-     - 📝 **"Create a note: submit project by 3:30 PM"**: Creates and categorizes a note in your local vault.
-     - 🗑️ **"Delete old invoice.pdf"**: Triggers the safety confirmation modal to prevent accidental data loss.
-     - ✍️ **"Draft a reply to Priya"**: Pre-fills an AI draft response in a local modal with "Save Draft" and "Discard" (never transmits).
-4. **Local Vault Modules**
-   - **Email**: 4 realistic seeded local emails (Priya Sharma, Security & Compliance, Billing Support, Alex Chen), read/unread toggles, search filters, and reading pane.
-   - **Calendar**: Today's timetable, event deletion, and permission-gated event creation.
-   - **Notes**: Full CRUD support (create, edit, search by keyword/category, delete) persisted to `localStorage`.
-   - **Files**: Sandbox file explorer displaying file sizes, types, and permissions, featuring `old invoice.pdf` as the primary test target.
-   - **Privacy & Audit Center**: Detailed breakdown of local architecture and a comprehensive, filterable audit trail of every tool invocation.
-5. **Vault Reset Mechanism**
-   - A one-click **"Reset Demo Vault"** button in the sidebar footer allows instant restoration of seeded defaults.
-
----
-
-## 📁 Project Structure
+## Architecture
 
 ```text
-local-first-agent/
-├── index.html        # Clean semantic markup with accessible modal dialogues
-├── styles.css        # Premium dark glassmorphism design system & micro-animations
-├── app.js            # State management, tool safety engine, audit logger, and UI logic
-└── README.md         # Architecture, safety design, and demo instructions
+Browser interface (index.html, styles.css, app.js)
+                 |
+                 | fetch('/api/...')
+                 v
+Node.js server on 127.0.0.1:3000 (server.js)
+                 |
+                 v
+Project-local demo database (data/db.json)
 ```
 
----
+The backend uses only Node.js built-in modules. It binds to `127.0.0.1`, which means it is reachable only from this computer. It manages JSON records in this project; it does not access real operating-system files.
 
-## 🚀 Getting Started
+## Run it
 
-PrivatePilot requires **no backend, no npm installation, and no API keys**. It runs anywhere modern web standards are supported.
-
-### Option 1: Direct File Opening
-Double-click `index.html` in your file explorer, or right-click and choose **Open with Browser** (Chrome, Edge, Firefox, Brave, Safari).
-
-### Option 2: Local Python Server (Recommended)
-From the project directory:
+Requirements: Node.js 18 or newer.
 
 ```bash
-# Python 3
-python -m http.server 8080
+node server.js
 ```
 
-Then navigate to:
+Then open [http://127.0.0.1:3000](http://127.0.0.1:3000) in a browser. Do not open `index.html` directly—the browser UI needs the local backend.
+
+To run the API verification suite in another terminal while the server is running:
+
+```bash
+node test-backend.js
 ```
-http://localhost:8080
-```
 
----
+## API overview
 
-## 🧪 Interactive Demo Walkthrough
+| Area | Endpoints |
+|---|---|
+| Email | `GET /api/emails`, `POST /api/emails/:id/read` |
+| Calendar | `GET /api/calendar`, `POST /api/calendar/events`, `DELETE /api/calendar/events/:id` |
+| Notes | `GET/POST /api/notes`, `PUT/DELETE /api/notes/:id` |
+| Files | `GET /api/files`, `POST /api/files/:id/delete-request`, `POST /api/files/:id/confirm-delete` |
+| Drafts | `GET/POST /api/drafts`, `DELETE /api/drafts/:id` |
+| Audit | `GET/POST/DELETE /api/audit-log` |
+| Reset | `POST /api/reset-demo-data` with `{ "confirm": true }` |
 
-Follow these steps to demonstrate all capabilities and safety guarantees:
+## Safety model
 
-### 1. Test Read-Only Immediate Execution
-- In the central command panel, click **"Summarize unread emails"**.
-- *Result:* The agent immediately scans 3 unread local messages, outputs an executive summary with action items, logs `vault.emails.read()` to the audit trail, and requires no user prompt.
-- Next, click **"What is on my calendar today?"**.
-- *Result:* Today's timetable is printed directly in the chat with zero delays.
+Read-only actions can run immediately. Changes are recorded in the audit log. File deletion is intentionally stricter:
 
-### 2. Test Local Write Action
-- Click **"Create a note: submit project by 3:30 PM"**.
-- *Result:* The note is created in localStorage under the `Tasks` category. Navigate to the **Notes** tab to verify the note is present, searchable, and editable.
+1. The UI requests a delete token from the backend.
+2. The user sees the target name and an irreversible-action warning.
+3. **Cancel** sends no deletion request.
+4. **Confirm** sends the short-lived token; only then does the backend remove that demo record from `data/db.json`.
 
-### 3. Test Destructive Confirmation Modal
-- Click **"Delete old invoice.pdf"** on the dashboard (or click **Test Delete "old invoice.pdf"** in the **Files** tab).
-- *Result:* The agent halts execution and opens the **Confirm Destructive Action** modal:
-  - Displays target: `old invoice.pdf` (142 KB).
-  - Displays tool call: `vault.files.delete("old invoice.pdf")`.
-  - Warns that deletion is irreversible.
-- Click **"Cancel (Abort)"**:
-  - Modal closes without modifying files.
-  - Audit log records `USER_REJECTED`.
-  - Agent confirms cancellation in chat.
-- Trigger the command again and click **"Confirm Permanent Deletion"**:
-  - Modal closes, the file is purged from the table and storage.
-  - Audit log records `USER_APPROVED` (`DESTRUCTIVE`).
-  - Agent reports successful deletion.
+The reset endpoint also rejects requests unless the request body contains `{ "confirm": true }`.
 
-### 4. Test Local Draft Reply (No External Send)
-- Click **"Draft a reply to Priya"**.
-- *Result:* The **Local Email Draft** modal opens.
-  - Notice the **LOCAL-ONLY SANDBOX** banner: *External dispatch is strictly disabled by policy.*
-  - Review the proposed reply generated for Priya Sharma regarding roadmap sync.
-  - Click **"Save Draft to Local Vault"**. The draft is stored locally; no external network packets are dispatched.
+## Demo flow
 
-### 5. Inspect Privacy & Audit Trail
-- Click **Privacy & Audit** on the left sidebar.
-- Inspect the 3 architecture pillars: *On-Device Storage*, *Quantized Phi-3 Mini Engine*, and *Permission-Gated Tools*.
-- Review the comprehensive audit table recording every execution and confirmation during your session.
-- Click **"Export Audit JSON"** to download a machine-readable audit report.
+1. Start the app with `node server.js`.
+2. Click **Summarize unread emails**.
+3. Create a note, then refresh the page to show it persisted.
+4. Attempt to delete `old invoice.pdf`; click **Cancel** and show it remains.
+5. Repeat deletion and click **Confirm**; show it disappears and the audit log records the action.
+6. Use **Reset Demo Vault** to restore the seeded records.
 
-### 6. Reset Demo State
-- Click **"Reset Demo Vault"** in the bottom-left sidebar.
-- Confirm the prompt to restore all emails, notes, calendar items, and files back to their initial seeded state.
+## Honest limitations
 
----
-
-## 🔒 Privacy & Compliance Statement
-
-> **Demo Local Vault Notice:** PrivatePilot is a client-side sandbox demonstration. It does not connect to actual Google, Microsoft, or system user accounts. All state mutations are strictly scoped to the user's browser storage.
+This is a functional local prototype, not a connection to real Gmail, real calendars, or real device files. Its command interpretation is deterministic JavaScript logic, not a running language model. A future fully local version could connect to a locally installed open-weight model such as Phi-3 Mini via Ollama, while keeping the same permission-gated tool layer.
